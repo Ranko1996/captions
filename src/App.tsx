@@ -1,58 +1,26 @@
 import './App.css';
-import { useEffect, useRef, useState } from 'react';
-// import { parseVTT } from './utils/captionParser';
-// import type { Caption } from './types/caption';
-import { formatTime } from './utils/timeFormater';
+import { useRef } from 'react'; 
+import { formatTime } from './utils/timeFormater'; 
+
+// Import custom hookova
 import { useCaptions } from './hooks/useCaptions';
-
-
+import { useCaptionSynchronization } from './hooks/useCaptionSincronization';
 
 function App() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const captionsContainerRef = useRef<HTMLDivElement>(null);
- 
+
   const { parsedCaptions, videoSource, captionsSource, changeMedia } = useCaptions();
 
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-
-
-  const handleTimeUpdate = () => {
-      if (videoRef.current && parsedCaptions.length > 0) {
-        const currentTime = videoRef.current.currentTime;
-        const newActiveIndex = parsedCaptions.findIndex(
-          (caption) => currentTime >= caption.startTime && currentTime < caption.endTime
-        );
-
-        if (newActiveIndex === -1) {
-          if (activeIndex !== null) {
-            setActiveIndex(null);
-          }
-        } else if (newActiveIndex !== activeIndex) {
-          setActiveIndex(newActiveIndex);
-        }
-      }
-    };
-    useEffect(() => {
-      if (activeIndex !== null && captionsContainerRef.current) {
-        const activeElement = captionsContainerRef.current.children[activeIndex + 1];
-        if (activeElement) {
-          activeElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-          });
-        }
-      }
-    }, [activeIndex]);
-
-    const handleCaptionClick = (startTime: number) => {
-      if (videoRef.current) {
-        videoRef.current.currentTime = startTime;
-      }
-    };
+  const { activeIndex, handleTimeUpdate, handleCaptionClick } = useCaptionSynchronization({
+    videoRef,
+    captionsContainerRef,
+    parsedCaptions,
+  });
 
 
   return (
-    <>
+     <>
      <div className="media-switcher">
         <button onClick={() => changeMedia('/videos/clip.mp4', '/captions/captions.vtt')}>
           Video 1
@@ -89,7 +57,5 @@ function App() {
     </>
   );
 }
-
-
 
 export default App;

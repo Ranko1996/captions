@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { parseVTT } from '../utils/captionParser'; // Putanja do captionParser.ts
-import type { Caption } from '../types/caption'; // Putanja do caption.ts
+import { parseVTT } from '../utils/captionParser'; 
+import type { Caption } from '../types/caption'; 
 
 interface UseCaptionsReturn {
   parsedCaptions: Caption[];
   videoSource: string;
-  captionsSource: string; // Dodajemo i captionsSource ako ti treba za track tag
+  captionsSource: string; 
   changeMedia: (videoPath: string, captionsPath: string) => void;
 }
 
